@@ -47,12 +47,12 @@
   header.top{
     background:linear-gradient(100deg,var(--navy-1),var(--navy-2));
     color:#fff;
-    padding:22px 28px 18px;
+    padding:18px 24px;
     display:flex;
-    align-items:flex-end;
+    align-items:center;
     justify-content:space-between;
     flex-wrap:wrap;
-    gap:10px;
+    gap:14px;
     border-bottom:4px solid var(--c-part);
   }
   header.top .eyebrow{
@@ -76,6 +76,38 @@
     line-height:1.5;
   }
   header.top .meta strong{color:#fff;font-weight:700;}
+
+  .header-center{flex:1 1 280px;min-width:220px;}
+  .header-side{display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex:0 0 auto;}
+
+  /* logo upload slots 
+  .logo-slot{
+    width:62px;height:62px;flex:0 0 auto;border-radius:13px;
+    border:1.5px dashed rgba(255,255,255,0.35);
+    cursor:pointer;overflow:hidden;background:rgba(255,255,255,0.04);
+    transition:background .15s,border-color .15s;
+  }
+  .logo-slot:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.65);}
+  .logo-slot:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+  .logo-content{
+    width:100%;height:100%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;color:rgba(255,255,255,0.6);
+  }
+  .logo-content img{width:100%;height:100%;object-fit:contain;padding:7px;}
+  .logo-ph-text{font-size:8.5px;margin-top:3px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;} */
+
+
+  /* language switcher */
+  .lang-switch{display:flex;gap:3px;background:rgba(255,255,255,0.09);border-radius:20px;padding:3px;}
+  .lang-btn{
+    appearance:none;border:none;background:transparent;color:#B9CCE3;
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;
+    letter-spacing:.04em;padding:5px 11px;border-radius:16px;cursor:pointer;
+    transition:background .15s,color .15s;
+  }
+  .lang-btn:hover{color:#fff;}
+  .lang-btn.active{background:var(--c-part);color:#06231F;}
+  .lang-btn:focus-visible{outline:2px solid #fff;outline-offset:1px;}
 
   /* ---------- Tabs ---------- */
   nav.tabs{
@@ -163,7 +195,7 @@
   .card .chart-wrap{
     position:relative;
     flex:1;
-    min-height:140px;
+    min-height:110px;
   }
   .card .legend-row{
     display:flex;
@@ -240,8 +272,11 @@
   }
 
   @media (max-width:560px){
-    header.top{flex-direction:column;align-items:flex-start;}
+    header.top{flex-direction:row;flex-wrap:wrap;align-items:center;}
+    .header-center{order:2;flex:1 1 100%;}
+    .header-center .eyebrow,.header-center h1{text-align:left;}
     header.top .meta{text-align:left;}
+    .header-side{order:3;flex:1 1 100%;align-items:flex-start;}
     .grid{grid-template-columns:1fr;}
   }
 </style>
@@ -249,13 +284,35 @@
 <body>
 
 <header class="top">
-  <div>
-    <div class="eyebrow">Results Framework · Monitoring Dashboard</div>
-    <h1>Youth Strategy Indicators 2023–2027</h1>
+  <div class="logo-slot" id="logoLeft" tabindex="0" role="button" aria-label="Upload logo">
+    <input type="file" accept="image/*" id="logoLeftInput" hidden>
+    <div class="logo-content" id="logoLeftContent">
+  <img src="RNM.png" alt="Logo">
+</div>
   </div>
-  <div class="meta">
-    United Nations Resident Coordinator Office in North Macedonia (UN RCO)<br>
-    <strong>Baseline – Interim Targets – Final Targets</strong>
+
+  <div class="header-center">
+    <div class="eyebrow" data-tr="eyebrow">Results Framework · Monitoring Dashboard</div>
+    <h1 data-tr="title">Youth Strategy Indicators 2023–2027</h1>
+  </div>
+
+  <div class="header-side">
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button class="lang-btn active" data-lang="en" aria-pressed="true">ENG</button>
+      <button class="lang-btn" data-lang="mk" aria-pressed="false">MK</button>
+      <button class="lang-btn" data-lang="sq" aria-pressed="false">ALB</button>
+    </div>
+    <div class="meta">
+      <span data-tr="metaOrg">United Nations Resident Coordinator Office in North Macedonia (UN RCO)</span><br>
+      <strong data-tr="metaSub">Baseline – Interim Targets – Final Targets</strong>
+    </div>
+  </div>
+
+  <div class="logo-slot" id="logoRight" tabindex="0" role="button" aria-label="Upload logo">
+    <input type="file" accept="image/*" id="logoRightInput" hidden>
+    <div class="logo-content" id="logoLeftContent">
+  <img src="image.png" alt="Logo">
+</div>
   </div>
 </header>
 
@@ -263,11 +320,67 @@
 
 <main id="panels"></main>
 
-<footer>
-  Indicator baselines and targets sourced from the National Youth Strategy 2018–2027 Results Framework · 
+<footer data-tr="footer">
+  Indicator baselines and targets sourced from the National Youth Strategy 2023–2027 Results Framework ·
 </footer>
 
 <script>
+/* =========================================================
+   I18N — UI chrome strings
+   ========================================================= */
+const UI = {
+  en:{
+    eyebrow:'Results Framework · Monitoring Dashboard',
+    title:'Youth Strategy Indicators 2023–2027',
+    metaOrg:'United Nations Resident Coordinator Office in North Macedonia (UN RCO)',
+    metaSub:'Baseline – Interim Targets – Final Targets',
+    footer:'Indicator baselines and targets sourced from the National Youth Strategy 2018–2027 Results Framework ·',
+    source:'Source:',
+    baselineWord:'Baseline',
+    interimTargetWord:'Interim Target',
+    targetWord:'Target',
+    finalTargetWord:'Final Target',
+    baselinePending:'Baseline pending',
+  },
+  mk:{
+    eyebrow:'Рамка на резултати · Контролна табла за следење',
+    title:'Индикатори на Стратегијата за млади 2023–2027',
+    metaOrg:'Канцеларија на резидентниот координатор на Обединетите нации во Северна Македонија (UN RCO)',
+    metaSub:'Базна вредност – Среднорочни цели – Конечни цели',
+    footer:'Базните вредности и целите на индикаторите се преземени од Рамката на резултати на Националната стратегија за млади 2018–2027 ·',
+    source:'Извор:',
+    baselineWord:'Базна вредност',
+    interimTargetWord:'Среднорочна цел',
+    targetWord:'Цел',
+    finalTargetWord:'Конечна цел',
+    baselinePending:'Базната вредност се очекува',
+  },
+  sq:{
+    eyebrow:'Korniza e Rezultateve · Paneli i Monitorimit',
+    title:'Treguesit e Strategjisë Rinore 2023–2027',
+    metaOrg:'Zyra e Koordinatorit Rezident të Kombeve të Bashkuara në Maqedoninë e Veriut (UN RCO)',
+    metaSub:'Vlera Bazë – Objektivat e Ndërmjetme – Objektivat Finale',
+    footer:'Vlerat bazë dhe objektivat e treguesve janë marrë nga Korniza e Rezultateve e Strategjisë Kombëtare Rinore 2018–2027 ·',
+    source:'Burimi:',
+    baselineWord:'Vlera bazë',
+    interimTargetWord:'Objektivi i ndërmjetëm',
+    targetWord:'Objektivi',
+    finalTargetWord:'Objektivi final',
+    baselinePending:'Vlera bazë në pritje',
+  },
+};
+
+let currentLang = 'en';
+function t(key){ return UI[currentLang][key]; }
+function tx(obj, key){ return (obj.i18n && obj.i18n[currentLang] && obj.i18n[currentLang][key] !== undefined) ? obj.i18n[currentLang][key] : obj[key]; }
+
+function applyStaticTranslations(){
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('[data-tr]').forEach(el=>{
+    el.textContent = t(el.dataset.tr);
+  });
+}
+
 /* =========================================================
    DATA
    ========================================================= */
@@ -275,196 +388,419 @@ const categories = [
   {
     id:'participation', label:'Participation & Governance',
     color:'var(--c-part)', cssColor:'#00B4B0', soft:'var(--c-part-soft)',
-    blurb:'Youth voice in local councils, elections, public services and decision-making.'
+    blurb:'Youth voice in local councils, elections, public services and decision-making.',
+    i18n:{
+      mk:{ label:'Учество и управување', blurb:'Гласот на младите во локалните совети, изборите, јавните услуги и одлучувањето.' },
+      sq:{ label:'Pjesëmarrja dhe Qeverisja', blurb:'Zëri i të rinjve në këshillat lokalë, zgjedhje, shërbime publike dhe vendimmarrje.' },
+    }
   },
   {
     id:'infra', label:'Infrastructure & Information',
     color:'var(--c-infra)', cssColor:'#8E2DE2', soft:'var(--c-infra-soft)',
-    blurb:'Digital skills, youth centres, information platforms and trained youth workers.'
+    blurb:'Digital skills, youth centres, information platforms and trained youth workers.',
+    i18n:{
+      mk:{ label:'Инфраструктура и информации', blurb:'Дигитални вештини, младински центри, информативни платформи и обучени младински работници.' },
+      sq:{ label:'Infrastruktura dhe Informacioni', blurb:'Aftësi digjitale, qendra rinore, platforma informacioni dhe punëtorë rinorë të trajnuar.' },
+    }
   },
   {
     id:'education', label:'Education',
     color:'var(--c-edu)', cssColor:'#1565F2', soft:'var(--c-edu-soft)',
-    blurb:'NEET rates, learning outcomes (PISA) and internationalisation of higher education.'
+    blurb:'NEET rates, learning outcomes (PISA) and internationalisation of higher education.',
+    i18n:{
+      mk:{ label:'Образование', blurb:'НЕЕТ стапки, образовни резултати (PISA) и интернационализација на високото образование.' },
+      sq:{ label:'Arsimi', blurb:'Normat NEET, rezultatet e të nxënit (PISA) dhe ndërkombëtarizimi i arsimit të lartë.' },
+    }
   },
   {
     id:'employment', label:'Employment',
     color:'var(--c-emp)', cssColor:'#FF7A00', soft:'var(--c-emp-soft)',
-    blurb:'Labour market outcomes for young people aged 15–29.'
+    blurb:'Labour market outcomes for young people aged 15–29.',
+    i18n:{
+      mk:{ label:'Вработување', blurb:'Резултати на пазарот на труд за младите луѓе на возраст од 15–29 години.' },
+      sq:{ label:'Punësimi', blurb:'Rezultatet e tregut të punës për të rinjtë e moshës 15–29 vjeç.' },
+    }
   },
   {
     id:'culture', label:'Culture & Wellbeing',
     color:'var(--c-cult)', cssColor:'#E8136B', soft:'var(--c-cult-soft)',
-    blurb:'Cultural participation, access to content, and risk behaviours among youth.'
+    blurb:'Cultural participation, access to content, and risk behaviours among youth.',
+    i18n:{
+      mk:{ label:'Култура и благосостојба', blurb:'Културно учество, пристап до содржини и ризично однесување кај младите.' },
+      sq:{ label:'Kultura dhe Mirëqenia', blurb:'Pjesëmarrja kulturore, qasja në përmbajtje dhe sjelljet e rrezikshme tek të rinjtë.' },
+    }
   },
   {
     id:'safety', label:'Safety & Digital Curricula',
     color:'var(--c-safe)', cssColor:'#D62828', soft:'var(--c-safe-soft)',
-    blurb:'School safety systems and cybersecurity education currently being rolled out.'
+    blurb:'School safety systems and cybersecurity education currently being rolled out.',
+    i18n:{
+      mk:{ label:'Безбедност и дигитални наставни програми', blurb:'Системи за безбедност во училиштата и образование за сајбер-безбедност во тек на воведување.' },
+      sq:{ label:'Siguria dhe Kurrikulat Digjitale', blurb:'Sistemet e sigurisë në shkolla dhe edukimi për sigurinë kibernetike që po implementohen aktualisht.' },
+    }
   },
 ];
 
-/* indicator chart "kind": bar3 | donut | grouped | stepper | pending */
+/* indicator chart "kind": bar3 | donut | grouped | stepper | pending
+   bar3 / grouped indicators carry baseYear — the year-labels are built
+   dynamically (e.g. "2022 Baseline · 2025 Interim Target · 2027 Target") */
 const indicators = {
   participation:[
     { kind:'bar3', title:'Functional Local Youth Councils',
       sub:'Number of municipalities with a Local Youth Council established under the Law on Youth Participation and Youth Policies.',
-      labels:['2022 Baseline','2025 Interim Target','2027 Target'], values:[15,35,60], unit:'',
-      source:'AYS' },
+      baseYear:2022, values:[15,35,60], unit:'',
+      source:'AYS',
+      i18n:{
+        mk:{ title:'Функционални локални младински совети',
+             sub:'Број на општини со основан Локален младински совет согласно Законот за учество и младинските политики.' },
+        sq:{ title:'Këshilla Rinorë Lokalë Funksionalë',
+             sub:'Numri i komunave me një Këshill Rinor Lokal të themeluar sipas Ligjit për Pjesëmarrjen e të Rinjve dhe Politikat Rinore.' },
+      } },
 
     { kind:'grouped', title:'Youth Candidates in Elections',
       sub:'% of candidates aged 18–29 among all candidates, by election type.',
       groups:['Parliamentary (MPs)','Local — Mayor','Local — Councillor'],
+      baseYear:'2020–21',
       baseline:[19.17,3,26.4], mid:[22,6,26.4], final:[25,10,26.4],
       midNote:'Local mayor/councillor mid & final = maintain baseline level',
-      unit:'%', source:'Youth Political Absence (2020) / Delayed Youth Participation (2021)' },
+      unit:'%', source:'Youth Political Absence (2020) / Delayed Youth Participation (2021)',
+      i18n:{
+        mk:{ title:'Млади кандидати на избори',
+             sub:'% на кандидати на возраст 18–29 години од сите кандидати, по вид на избори.',
+             groups:['Парламентарни (пратеници)','Локални — градоначалник','Локални — советник'],
+             midNote:'Среднорочната и конечната цел за градоначалник/советник = одржување на базното ниво',
+             source:'Политичка апстиненција на младите (2020) / Одложено учество на младите (2021)' },
+        sq:{ title:'Kandidatët e Rinj në Zgjedhje',
+             sub:'% e kandidatëve të moshës 18–29 vjeç nga të gjithë kandidatët, sipas llojit të zgjedhjeve.',
+             groups:['Parlamentare (Deputetë)','Lokale — Kryetar Komune','Lokale — Këshilltar'],
+             midNote:'Objektivi i ndërmjetëm/final për kryetar komune/këshilltar = ruajtja e nivelit bazë',
+             source:'Mungesa Politike e të Rinjve (2020) / Pjesëmarrja e Vonuar Rinore (2021)' },
+      } },
 
     { kind:'donut', title:'Youth E-Engagement with Authorities',
       sub:'% of young people (16–29) who use the internet to communicate with public authorities.',
       year:'2021', value:37.5, mid:42, final:47.5, unit:'%', color:'cssColor',
-      source:'Eurostat' },
+      source:'Eurostat',
+      i18n:{
+        mk:{ title:'Е-учество на младите со властите',
+             sub:'% на млади луѓе (16–29) кои користат интернет за комуникација со јавните власти.' },
+        sq:{ title:'Pjesëmarrja Elektronike e të Rinjve me Autoritetet',
+             sub:'% e të rinjve (16–29 vjeç) që përdorin internetin për të komunikuar me autoritetet publike.' },
+      } },
 
     { kind:'donut', title:'Youth Voice in Decision-Making',
       sub:'% of young people (15–29) who feel youth are adequately involved in decision-making.',
       year:'2022', value:22.5, mid:27, final:32, unit:'%',
-      source:'Youth Trends Survey 2022, AYS' },
+      source:'Youth Trends Survey 2022, AYS',
+      i18n:{
+        mk:{ title:'Гласот на младите во одлучувањето',
+             sub:'% на млади луѓе (15–29) кои сметаат дека младите се соодветно вклучени во одлучувањето.',
+             source:'Анкета за младинските трендови 2022, АМС' },
+        sq:{ title:'Zëri i të Rinjve në Vendimmarrje',
+             sub:'% e të rinjve (15–29 vjeç) që ndjejnë se të rinjtë janë përfshirë në mënyrë adekuate në vendimmarrje.',
+             source:'Anketa e Trendeve Rinore 2022, ARS' },
+      } },
   ],
 
   infra:[
     { kind:'donut', title:'Digital Skills Among Youth',
       sub:'% of young people (16–29) with basic or above-basic digital skills.',
       year:'2021', value:58.2, mid:63, final:68, unit:'%',
-      source:'Eurostat' },
+      source:'Eurostat',
+      i18n:{
+        mk:{ title:'Дигитални вештини кај младите',
+             sub:'% на млади луѓе (16–29) со основни или над-основни дигитални вештини.' },
+        sq:{ title:'Aftësitë Digjitale tek të Rinjtë',
+             sub:'% e të rinjve (16–29 vjeç) me aftësi digjitale bazë ose mbi bazë.' },
+      } },
 
     { kind:'bar3', title:'Youth Information Platform Visits',
       sub:'Annual visits to the national youth information platform.',
-      labels:['Baseline','2025 Interim Target','2027 Target'], values:[0,20000,60000], unit:'',
+      baseYear:2022, values:[0,20000,60000], unit:'',
       note:'Baseline: platform does not currently exist',
-      source:'Platform visitation statistics' },
+      source:'Platform visitation statistics',
+      i18n:{
+        mk:{ title:'Посети на младинската информативна платформа',
+             sub:'Годишни посети на националната информативна платформа за млади.',
+             note:'Базна вредност: платформата моментално не постои',
+             source:'Статистика на посети на платформата' },
+        sq:{ title:'Vizitat në Platformën e Informacionit Rinor',
+             sub:'Vizitat vjetore në platformën kombëtare të informacionit rinor.',
+             note:'Vlera bazë: platforma aktualisht nuk ekziston',
+             source:'Statistikat e vizitave të platformës' },
+      } },
 
     { kind:'bar3', title:'Quality of Youth Media Content',
       sub:'Average rating (1–5 scale) given by young people (15–29) for the quality of youth-targeted media information.',
-      labels:['2022 Baseline','2025 Interim Target','2027 Target'], values:[2.6,2.9,3.3], unit:'/5', max:5,
-      source:'Youth Trends Survey 2022, AYS' },
+      baseYear:2022, values:[2.6,2.9,3.3], unit:'/5', max:5,
+      source:'Youth Trends Survey 2022, AYS',
+      i18n:{
+        mk:{ title:'Квалитет на медиумските содржини за млади',
+             sub:'Просечна оценка (скала 1–5) дадена од младите луѓе (15–29) за квалитетот на медиумските информации насочени кон млади.',
+             source:'Анкета за младинските трендови 2022, АМС' },
+        sq:{ title:'Cilësia e Përmbajtjes Mediatike për të Rinjtë',
+             sub:'Vlerësimi mesatar (shkalla 1–5) dhënë nga të rinjtë (15–29 vjeç) për cilësinë e informacionit medial të orientuar te të rinjtë.',
+             source:'Anketa e Trendeve Rinore 2022, ARS' },
+      } },
 
     { kind:'bar3', title:'Youth Centres Established',
       sub:'Number of youth centres established under the Law on Youth Participation and Youth Policies.',
-      labels:['2022 Baseline','2025 Interim Target','2027 Target'], values:[6,22,42], unit:'',
-      source:'Calculated for the strategy' },
+      baseYear:2022, values:[6,22,42], unit:'',
+      source:'Calculated for the strategy',
+      i18n:{
+        mk:{ title:'Воспоставени младински центри',
+             sub:'Број на младински центри воспоставени согласно Законот за учество и младинските политики.',
+             source:'Пресметано за стратегијата' },
+        sq:{ title:'Qendrat Rinore të Themeluara',
+             sub:'Numri i qendrave rinore të themeluara sipas Ligjit për Pjesëmarrjen e të Rinjve dhe Politikat Rinore.',
+             source:'Llogaritur për strategjinë' },
+      } },
 
     { kind:'bar3', title:'Trained Youth Workers',
       sub:'Youth workers who acquired or had recognised competencies via education, study or validation.',
-      labels:['Baseline','2025 Interim Target','2027 Target'], values:[24,85,170], unit:'',
-      source:'Calculated for the strategy' },
+      baseYear:2022, values:[24,85,170], unit:'',
+      source:'Calculated for the strategy',
+      i18n:{
+        mk:{ title:'Обучени младински работници',
+             sub:'Младински работници кои стекнале или имаат признаени компетенции преку образование, студии или валидација.',
+             source:'Пресметано за стратегијата' },
+        sq:{ title:'Punëtorë Rinorë të Trajnuar',
+             sub:'Punëtorë rinorë që kanë fituar ose kanë kompetenca të njohura përmes arsimit, studimit ose vlerësimit.',
+             source:'Llogaritur për strategjinë' },
+      } },
   ],
 
   education:[
     { kind:'donut', title:'Youth NEET Rate', invert:true,
       sub:'% of young people (15–29) Not in Education, Employment or Training.',
       year:'2021', value:24.3, mid:22, final:20, unit:'%',
-      source:'State Statistical Office' },
+      source:'State Statistical Office',
+      i18n:{
+        mk:{ title:'Стапка на млади НЕЕТ',
+             sub:'% на млади луѓе (15–29) кои не се во образование, вработување или обука.',
+             source:'Државен завод за статистика' },
+        sq:{ title:'Norma NEET tek të Rinjtë',
+             sub:'% e të rinjve (15–29 vjeç) që nuk janë në arsim, punësim ose trajnim.',
+             source:'Enti Shtetëror i Statistikave' },
+      } },
 
     { kind:'grouped', title:'PISA: Basic Competency Levels',
       sub:'% of young people with minimum competency in secondary education.',
       groups:['Mathematics','Reading','Science'],
+      baseYear:2018,
       baseline:[39,45,50], mid:[49,55,60], final:[49,55,60],
       midNote:'2025 PISA cycle is the only re-test within the strategy period',
-      unit:'%', source:'PISA Study, OECD' },
+      unit:'%', source:'PISA Study, OECD',
+      i18n:{
+        mk:{ title:'PISA: Нивоа на основна компетентност',
+             sub:'% на млади со минимална компетентност во средното образование.',
+             groups:['Математика','Читање','Природни науки'],
+             midNote:'Циклусот PISA 2025 е единствениот повторен тест во периодот на стратегијата',
+             source:'Студија PISA, ОЕЦД' },
+        sq:{ title:'PISA: Nivelet e Kompetencës Bazë',
+             sub:'% e të rinjve me kompetencë minimale në arsimin e mesëm.',
+             groups:['Matematikë','Lexim','Shkencë'],
+             midNote:'Cikli PISA 2025 është i vetmi ritestim brenda periudhës së strategjisë',
+             source:'Studimi PISA, OECD' },
+      } },
 
     { kind:'bar3', title:'International Students in Higher Ed',
       sub:'% of international students enrolled in higher education in North Macedonia.',
-      labels:['2020 Baseline','2025 Interim Target','2027 Target'], values:[0.2,1.5,3], unit:'%',
-      source:'Eurostat' },
+      baseYear:2020, values:[0.2,1.5,3], unit:'%',
+      source:'Eurostat',
+      i18n:{
+        mk:{ title:'Меѓународни студенти во високото образование',
+             sub:'% на меѓународни студенти запишани на високообразовни институции во Северна Македонија.' },
+        sq:{ title:'Studentët Ndërkombëtarë në Arsimin e Lartë',
+             sub:'% e studentëve ndërkombëtarë të regjistruar në arsimin e lartë në Maqedoninë e Veriut.' },
+      } },
   ],
 
   employment:[
     { kind:'bar3', title:'Youth Employment Rate',
       sub:'Employment rate, % of persons aged 15–29.',
-      labels:['2021 Baseline','2025 Interim Target','2027 Target'], values:[33.4,35,37], unit:'%',
-      source:'State Statistical Office' },
+      baseYear:2021, values:[33.4,35,37], unit:'%',
+      source:'State Statistical Office',
+      i18n:{
+        mk:{ title:'Стапка на вработеност на младите',
+             sub:'Стапка на вработеност, % на лица на возраст 15–29 години.',
+             source:'Државен завод за статистика' },
+        sq:{ title:'Norma e Punësimit Rinor',
+             sub:'Norma e punësimit, % e personave të moshës 15–29 vjeç.',
+             source:'Enti Shtetëror i Statistikave' },
+      } },
 
     { kind:'bar3', title:'Youth Unemployment Rate', invert:true,
       sub:'Unemployment rate, % of the population aged 15–29.',
-      labels:['2021 Baseline','2025 Interim Target','2027 Target'], values:[27.6,26,24], unit:'%',
-      source:'State Statistical Office' },
+      baseYear:2021, values:[27.6,26,24], unit:'%',
+      source:'State Statistical Office',
+      i18n:{
+        mk:{ title:'Стапка на невработеност на младите',
+             sub:'Стапка на невработеност, % на населението на возраст 15–29 години.',
+             source:'Државен завод за статистика' },
+        sq:{ title:'Norma e Papunësisë Rinore',
+             sub:'Norma e papunësisë, % e popullsisë së moshës 15–29 vjeç.',
+             source:'Enti Shtetëror i Statistikave' },
+      } },
 
     { kind:'bar3', title:'Long-term Unemployment (Youth)', invert:true,
       sub:'Unemployed 12 months or more, % of the population aged 15–29.',
-      labels:['2022 Baseline','2025 Interim Target','2027 Target'], values:[21.1,18,16.5], unit:'%',
-      source:'Eurostat' },
+      baseYear:2022, values:[21.1,18,16.5], unit:'%',
+      source:'Eurostat',
+      i18n:{
+        mk:{ title:'Долгорочна невработеност (млади)',
+             sub:'Невработени 12 месеци или повеќе, % од населението на возраст 15–29 години.' },
+        sq:{ title:'Papunësia Afatgjatë (të Rinjtë)',
+             sub:'Të papunë 12 muaj ose më shumë, % e popullsisë së moshës 15–29 vjeç.' },
+      } },
 
     { kind:'bar3', title:'Youth Self-Employment Rate',
       sub:'Self-employment rate, % of persons aged 15–29.',
-      labels:['2020 Baseline','2025 Interim Target','2027 Target'], values:[6.8,10,14], unit:'%',
-      source:'Eurostat' },
+      baseYear:2020, values:[6.8,10,14], unit:'%',
+      source:'Eurostat',
+      i18n:{
+        mk:{ title:'Стапка на самовработување на младите',
+             sub:'Стапка на самовработување, % на лица на возраст 15–29 години.' },
+        sq:{ title:'Norma e Vetëpunësimit Rinor',
+             sub:'Norma e vetëpunësimit, % e personave të moshës 15–29 vjeç.' },
+      } },
   ],
 
   culture:[
     { kind:'donut', title:'Cultural & Artistic Participation',
       sub:'% of young people (15–29) participating in cultural/artistic activities, as organisers or participants.',
       year:'2022', value:33.7, mid:38, final:43, unit:'%',
-      source:'Youth Trends Survey 2022, AYS' },
+      source:'Youth Trends Survey 2022, AYS',
+      i18n:{
+        mk:{ title:'Културно и уметничко учество',
+             sub:'% на млади луѓе (15–29) кои учествуваат во културни/уметнички активности, како организатори или учесници.',
+             source:'Анкета за младинските трендови 2022, АМС' },
+        sq:{ title:'Pjesëmarrja Kulturore dhe Artistike',
+             sub:'% e të rinjve (15–29 vjeç) që marrin pjesë në aktivitete kulturore/artistike, si organizatorë ose pjesëmarrës.',
+             source:'Anketa e Trendeve Rinore 2022, ARS' },
+      } },
 
     { kind:'donut', title:'Access to Local Cultural Content',
       sub:'% of young people (15–29) with access to cultural content at the local level.',
       year:'2022', value:15.3, mid:20, final:25, unit:'%',
-      source:'Youth Trends Survey 2022, AYS' },
+      source:'Youth Trends Survey 2022, AYS',
+      i18n:{
+        mk:{ title:'Пристап до локални културни содржини',
+             sub:'% на млади луѓе (15–29) со пристап до културни содржини на локално ниво.',
+             source:'Анкета за младинските трендови 2022, АМС' },
+        sq:{ title:'Qasja në Përmbajtje Kulturore Lokale',
+             sub:'% e të rinjve (15–29 vjeç) me qasje në përmbajtje kulturore në nivel lokal.',
+             source:'Anketa e Trendeve Rinore 2022, ARS' },
+      } },
 
     { kind:'grouped', title:'Substance Use Among Youth', invert:true,
       sub:'% of young people (15–29) who are users of cigarettes, alcohol or drugs.',
       groups:['Cigarettes','Alcohol','Drugs'],
+      baseYear:2022,
       baseline:[20.4,58.2,10.4], mid:[17,55,7.5], final:[15,53,5],
-      unit:'%', source:'Youth Trends Survey 2022, AYS' },
+      unit:'%', source:'Youth Trends Survey 2022, AYS',
+      i18n:{
+        mk:{ title:'Употреба на супстанции кај младите',
+             sub:'% на млади луѓе (15–29) кои употребуваат цигари, алкохол или дрога.',
+             groups:['Цигари','Алкохол','Дрога'],
+             source:'Анкета за младинските трендови 2022, АМС' },
+        sq:{ title:'Përdorimi i Substancave tek të Rinjtë',
+             sub:'% e të rinjve (15–29 vjeç) që janë përdorues të cigareve, alkoolit ose drogës.',
+             groups:['Cigare','Alkool','Drogë'],
+             source:'Anketa e Trendeve Rinore 2022, ARS' },
+      } },
   ],
 
   safety:[
     { kind:'stepper', title:'Cybersecurity in ICT Curricula',
       sub:'Integration of a cybersecurity curriculum into ICT classes in secondary schools.',
       steps:['Does not exist in the curriculum','Draft curriculum prepared','Adopted & in teaching use'],
-      current:0, source:'AYS / Ministry of Education' },
+      current:0, source:'AYS / Ministry of Education',
+      i18n:{
+        mk:{ title:'Сајбер-безбедност во ИКТ наставните програми',
+             sub:'Вклучување на наставна програма за сајбер-безбедност во часовите по ИКТ во средните училишта.',
+             steps:['Не постои во наставната програма','Подготвен нацрт на наставна програма','Усвоена и во употреба во наставата'],
+             source:'АМС / Министерство за образование и наука' },
+        sq:{ title:'Siguria Kibernetike në Kurrikulat e TIK-ut',
+             sub:'Integrimi i një kurrikule për sigurinë kibernetike në lëndët e TIK-ut në shkollat e mesme.',
+             steps:['Nuk ekziston në kurrikulë','Kurrikula draft e përgatitur','E miratuar dhe në përdorim mësimor'],
+             source:'ARS / Ministria e Arsimit' },
+      } },
 
     { kind:'stepper', title:'Peer Violence Recording System',
       sub:'A national system for recording peer-violence incidents in schools.',
       steps:['No such system exists','System in piloting phase','Functional & operational'],
-      current:0, source:'AYS / Ministry of Education' },
+      current:0, source:'AYS / Ministry of Education',
+      i18n:{
+        mk:{ title:'Систем за регистрирање врсничко насилство',
+             sub:'Национален систем за регистрирање на инциденти на врсничко насилство во училиштата.',
+             steps:['Таков систем не постои','Системот е во пилот фаза','Функционален и оперативен'],
+             source:'АМС / Министерство за образование и наука' },
+        sq:{ title:'Sistemi i Regjistrimit të Dhunës mes Bashkëmoshatarëve',
+             sub:'Një sistem kombëtar për regjistrimin e incidenteve të dhunës mes bashkëmoshatarëve në shkolla.',
+             steps:['Nuk ekziston një sistem i tillë','Sistemi në fazën pilote','Funksional dhe operativ'],
+             source:'ARS / Ministria e Arsimit' },
+      } },
 
     { kind:'pending', title:'Students Feeling Safe at School',
       sub:'% of secondary school students who feel safe at school.',
       note:'Baseline survey scheduled for 2023 — interim targets 2025 and final targets 2027 will be defined once the baseline is established.',
-      source:'AYS school safety survey' },
+      source:'AYS school safety survey',
+      i18n:{
+        mk:{ title:'Ученици кои се чувствуваат безбедно во училиште',
+             sub:'% на ученици од средно образование кои се чувствуваат безбедно во училиштето.',
+             note:'Базното истражување е закажано за 2023 година — среднорочните цели за 2025 и конечните цели за 2027 ќе бидат дефинирани откако ќе се утврди базната вредност.',
+             source:'Анкета за безбедност во училиштата на АМС' },
+        sq:{ title:'Nxënësit që Ndihen të Sigurt në Shkollë',
+             sub:'% e nxënësve të arsimit të mesëm që ndihen të sigurt në shkollë.',
+             note:'Anketa bazë është planifikuar për vitin 2023 — objektivat e ndërmjetme për 2025 dhe objektivat finale për 2027 do të përcaktohen pasi të vendoset vlera bazë.',
+             source:'Anketa e sigurisë shkollore e ARS' },
+      } },
   ],
 };
 
 /* =========================================================
-   RENDER: shell (tabs + panels)
+   RENDER: tabs + panel shells (rebuilt on language switch)
    ========================================================= */
 const tabsEl = document.getElementById('tabs');
 const panelsEl = document.getElementById('panels');
-const renderedPanels = new Set();
+let renderedPanels = new Set();
+let activeCatId = categories[0].id;
+const chartRegistry = {};
 
-categories.forEach((cat,i)=>{
-  const btn = document.createElement('button');
-  btn.textContent = cat.label;
-  btn.style.setProperty('--tab-color', cat.cssColor);
-  if(i===0) btn.classList.add('active');
-  btn.addEventListener('click',()=>activate(cat.id));
-  tabsEl.appendChild(btn);
+function buildShell(){
+  tabsEl.innerHTML = '';
+  panelsEl.innerHTML = '';
+  renderedPanels = new Set();
 
-  const panel = document.createElement('section');
-  panel.className = 'panel'+(i===0?' active':'');
-  panel.id = 'panel-'+cat.id;
-  panel.innerHTML = `
-    <div class="panel-intro">
-      <span class="dot" style="background:${cat.cssColor}"></span>
-      <h2>${cat.label}</h2>
-      <p>— ${cat.blurb}</p>
-    </div>
-    <div class="grid" id="grid-${cat.id}"></div>
-  `;
-  panelsEl.appendChild(panel);
-});
+  categories.forEach((cat)=>{
+    const btn = document.createElement('button');
+    btn.textContent = tx(cat,'label');
+    btn.style.setProperty('--tab-color', cat.cssColor);
+    if(cat.id===activeCatId) btn.classList.add('active');
+    btn.addEventListener('click',()=>activate(cat.id));
+    tabsEl.appendChild(btn);
+
+    const panel = document.createElement('section');
+    panel.className = 'panel'+(cat.id===activeCatId?' active':'');
+    panel.id = 'panel-'+cat.id;
+    panel.innerHTML = `
+      <div class="panel-intro">
+        <span class="dot" style="background:${cat.cssColor}"></span>
+        <h2>${tx(cat,'label')}</h2>
+        <p>— ${tx(cat,'blurb')}</p>
+      </div>
+      <div class="grid" id="grid-${cat.id}"></div>
+    `;
+    panelsEl.appendChild(panel);
+  });
+
+  renderPanel(activeCatId);
+  renderedPanels.add(activeCatId);
+}
 
 function activate(id){
+  activeCatId = id;
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   const idx = categories.findIndex(c=>c.id===id);
@@ -474,6 +810,20 @@ function activate(id){
     renderPanel(id);
     renderedPanels.add(id);
   }
+}
+
+/* labels shown on bar3 / grouped charts, built from baseYear + current language */
+function targetLabels(ind){
+  return [
+    `${ind.baseYear} ${t('baselineWord')}`,
+    `2025 ${t('interimTargetWord')}`,
+    `2027 ${t('targetWord')}`,
+  ];
+}
+
+function makeChart(id, config){
+  if(chartRegistry[id]){ chartRegistry[id].destroy(); }
+  chartRegistry[id] = new Chart(document.getElementById(id), config);
 }
 
 /* =========================================================
@@ -493,27 +843,28 @@ function renderPanel(catId){
 
     if(ind.kind==='pending'){
       card.innerHTML = `
-        <div class="badge">Baseline pending</div>
-        <p class="ctitle" style="margin-top:4px">${ind.title}</p>
-        <p>${ind.note}</p>
-        <div class="source">Source: ${ind.source}</div>
+        <div class="badge">${t('baselinePending')}</div>
+        <p class="ctitle" style="margin-top:4px">${tx(ind,'title')}</p>
+        <p>${tx(ind,'note')}</p>
+        <div class="source">${t('source')} ${tx(ind,'source')}</div>
       `;
       grid.appendChild(card);
       return;
     }
 
     if(ind.kind==='stepper'){
+      const steps = tx(ind,'steps');
       card.innerHTML = `
-        <p class="ctitle">${ind.title}</p>
-        <p class="csub">${ind.sub}</p>
+        <p class="ctitle">${tx(ind,'title')}</p>
+        <p class="csub">${tx(ind,'sub')}</p>
         <div class="stepper">
-          ${ind.steps.map((s,i)=>`
+          ${steps.map((s,i)=>`
             <div class="step ${i<ind.current?'done':''} ${i===ind.current?'current':''}">
               <div class="node"></div>
               <p class="${i===ind.current?'now':''}">${s}</p>
             </div>`).join('')}
         </div>
-        <div class="source">Source: ${ind.source}</div>
+        <div class="source">${t('source')} ${tx(ind,'source')}</div>
       `;
       grid.appendChild(card);
       return;
@@ -521,8 +872,8 @@ function renderPanel(catId){
 
     if(ind.kind==='donut'){
       card.innerHTML = `
-        <p class="ctitle">${ind.title}</p>
-        <p class="csub">${ind.sub}</p>
+        <p class="ctitle">${tx(ind,'title')}</p>
+        <p class="csub">${tx(ind,'sub')}</p>
         <div class="chart-wrap donut-figure">
           <canvas id="${cardId}"></canvas>
           <div class="center-label">
@@ -531,14 +882,13 @@ function renderPanel(catId){
           </div>
         </div>
         <div class="target-line">
-          <span>Interim Target 2025: <b>${ind.mid}${ind.unit}</b></span>
-          <span>Final Target 2027: <b>${ind.final}${ind.unit}</b></span>
+          <span>${t('interimTargetWord')} 2025: <b>${ind.mid}${ind.unit}</b></span>
+          <span>${t('finalTargetWord')} 2027: <b>${ind.final}${ind.unit}</b></span>
         </div>
-        <div class="source">Source: ${ind.source}</div>
+        <div class="source">${t('source')} ${tx(ind,'source')}</div>
       `;
       grid.appendChild(card);
-      const remainder = Math.max(0, 100-ind.value*(ind.unit==='%'?1:1));
-      new Chart(document.getElementById(cardId), {
+      makeChart(cardId, {
         type:'doughnut',
         data:{
           labels:['Current','Remaining'],
@@ -558,18 +908,19 @@ function renderPanel(catId){
     }
 
     if(ind.kind==='bar3'){
+      const labels = targetLabels(ind);
       card.innerHTML = `
-        <p class="ctitle">${ind.title}</p>
-        <p class="csub">${ind.sub}${ind.note? ' <em>('+ind.note+')</em>':''}</p>
+        <p class="ctitle">${tx(ind,'title')}</p>
+        <p class="csub">${tx(ind,'sub')}${ind.note? ' <em>('+tx(ind,'note')+')</em>':''}</p>
         <div class="chart-wrap"><canvas id="${cardId}"></canvas></div>
-        <div class="source">Source: ${ind.source}</div>
+        <div class="source">${t('source')} ${tx(ind,'source')}</div>
       `;
       grid.appendChild(card);
       const palette = [ '#C9CFD9', shade(cat.cssColor,0.55), cat.cssColor ];
-      new Chart(document.getElementById(cardId), {
+      makeChart(cardId, {
         type:'bar',
         data:{
-          labels: ind.labels,
+          labels: labels,
           datasets:[{
             data: ind.values,
             backgroundColor: palette,
@@ -591,26 +942,28 @@ function renderPanel(catId){
     }
 
     if(ind.kind==='grouped'){
+      const labels = targetLabels(ind);
+      const groups = tx(ind,'groups');
       card.innerHTML = `
-        <p class="ctitle">${ind.title}</p>
-        <p class="csub">${ind.sub}${ind.midNote? ' <em>('+ind.midNote+')</em>':''}</p>
+        <p class="ctitle">${tx(ind,'title')}</p>
+        <p class="csub">${tx(ind,'sub')}${ind.midNote? ' <em>('+tx(ind,'midNote')+')</em>':''}</p>
         <div class="chart-wrap"><canvas id="${cardId}"></canvas></div>
         <div class="legend-row">
-          <span><span class="sw" style="background:#C9CFD9"></span>Baseline</span>
-          <span><span class="sw" style="background:${shade(cat.cssColor,0.55)}"></span>2025 Interim Target</span>
-          <span><span class="sw" style="background:${cat.cssColor}"></span>2027 Target</span>
+          <span><span class="sw" style="background:#C9CFD9"></span>${labels[0]}</span>
+          <span><span class="sw" style="background:${shade(cat.cssColor,0.55)}"></span>${labels[1]}</span>
+          <span><span class="sw" style="background:${cat.cssColor}"></span>${labels[2]}</span>
         </div>
-        <div class="source">Source: ${ind.source}</div>
+        <div class="source">${t('source')} ${tx(ind,'source')}</div>
       `;
       grid.appendChild(card);
-      new Chart(document.getElementById(cardId), {
+      makeChart(cardId, {
         type:'bar',
         data:{
-          labels: ind.groups,
+          labels: groups,
           datasets:[
-            { label:'Baseline', data: ind.baseline, backgroundColor:'#C9CFD9', borderRadius:5, maxBarThickness:26 },
-            { label:'2025 Interim Target', data: ind.mid, backgroundColor:shade(cat.cssColor,0.55), borderRadius:5, maxBarThickness:26 },
-            { label:'2027 Target', data: ind.final, backgroundColor:cat.cssColor, borderRadius:5, maxBarThickness:26 },
+            { label:labels[0], data: ind.baseline, backgroundColor:'#C9CFD9', borderRadius:5, maxBarThickness:26 },
+            { label:labels[1], data: ind.mid, backgroundColor:shade(cat.cssColor,0.55), borderRadius:5, maxBarThickness:26 },
+            { label:labels[2], data: ind.final, backgroundColor:cat.cssColor, borderRadius:5, maxBarThickness:26 },
           ]
         },
         options:{
@@ -638,9 +991,45 @@ function shade(hex, amt){
   return `rgb(${nr},${ng},${nb})`;
 }
 
+/* =========================================================
+   Language switcher
+   ========================================================= */
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentLang = btn.dataset.lang;
+    document.querySelectorAll('.lang-btn').forEach(b=>{
+      b.classList.toggle('active', b===btn);
+      b.setAttribute('aria-pressed', b===btn ? 'true':'false');
+    });
+    applyStaticTranslations();
+    buildShell();
+  });
+});
+
+/* =========================================================
+   Logo upload slots
+   ========================================================= 
+function setupLogoSlot(slotId, inputId, contentId){
+  const slot = document.getElementById(slotId);
+  const input = document.getElementById(inputId);
+  const content = document.getElementById(contentId);
+  const open = ()=> input.click();
+  slot.addEventListener('click', open);
+  slot.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
+  input.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{ content.innerHTML = `<img src="${ev.target.result}" alt="Logo">`; };
+    reader.readAsDataURL(file);
+  });
+}
+setupLogoSlot('logoLeft','logoLeftInput','logoLeftContent');
+setupLogoSlot('logoRight','logoRightInput','logoRightContent'); */
+
 /* initial render */
-renderPanel(categories[0].id);
-renderedPanels.add(categories[0].id);
+applyStaticTranslations();
+buildShell();
 </script>
 </body>
 </html>
