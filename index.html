@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>National Youth Strategy 2023–2027 · Results Framework Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#EEF1F5;
+    --card:#FFFFFF;
+    --ink:#16263B;
+    --muted:#677488;
+    --line:#E2E6ED;
+    --navy-1:#0B2240;
+    --navy-2:#123A63;
+
+    --c-part:#00B4B0;     /* Participation & Governance */
+    --c-part-soft:#00FFAA;
+    --c-infra:#8E2DE2;    /* Infrastructure & Info */
+    --c-infra-soft:#00FFAA;
+    --c-edu:#1565F2;      /* Education */
+    --c-edu-soft:#00FFAA;
+    --c-emp:#FF7A00;      /* Employment */
+    --c-emp-soft:#00FFAA;
+    --c-cult:#E8136B;     /* Culture & Risk Behaviours */
+    --c-cult-soft:#00FFAA;
+    --c-safe:#D62828;     /* Safety & Digital */
+    --c-safe-soft:#F8D2D2;
+
+    --base:#C9CFD9;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Manrope',-apple-system,Segoe UI,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Header ---------- */
+  header.top{
+    background:linear-gradient(100deg,var(--navy-1),var(--navy-2));
+    color:#fff;
+    padding:22px 28px 18px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    border-bottom:4px solid var(--c-part);
+  }
+  header.top .eyebrow{
+    font-size:11.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#8FB8E8;
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  header.top h1{
+    margin:0;
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:-0.01em;
+  }
+  header.top .meta{
+    text-align:right;
+    font-size:12.5px;
+    color:#B9CCE3;
+    line-height:1.5;
+  }
+  header.top .meta strong{color:#fff;font-weight:700;}
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex;
+    background:#0E2A4A;
+    overflow-x:auto;
+    border-bottom:1px solid #0A1E36;
+  }
+  nav.tabs button{
+    appearance:none;
+    border:none;
+    background:transparent;
+    color:#9FB3CC;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.01em;
+    padding:13px 20px;
+    cursor:pointer;
+    white-space:nowrap;
+    border-bottom:3px solid transparent;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  nav.tabs button:hover{ color:#fff; background:rgba(255,255,255,0.06); }
+  nav.tabs button:focus-visible{ outline:2px solid #fff; outline-offset:-2px; }
+  nav.tabs button.active{
+    color:#fff;
+    background:var(--tab-color, var(--c-part));
+    border-bottom-color:var(--tab-color, var(--c-part));
+  }
+
+  /* ---------- Layout ---------- */
+  main{padding:22px 26px 60px;max-width:1400px;margin:0 auto;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .panel-intro{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    margin:4px 0 18px;
+  }
+  .panel-intro h2{
+    font-size:18px;
+    font-weight:800;
+    margin:0;
+    color:var(--ink);
+  }
+  .panel-intro p{
+    margin:0;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));
+    gap:18px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px 16px 12px;
+    box-shadow:0 1px 2px rgba(20,30,50,0.04);
+    display:flex;
+    flex-direction:column;
+    min-height:250px;
+  }
+  .card .ctitle{
+    font-size:14px;
+    font-weight:800;
+    color:var(--ink);
+    margin:0 0 3px;
+  }
+  .card .csub{
+    font-size:11.5px;
+    color:var(--muted);
+    line-height:1.4;
+    margin:0 0 10px;
+    min-height:30px;
+  }
+  .card .chart-wrap{
+    position:relative;
+    flex:1;
+    min-height:140px;
+  }
+  .card .legend-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:8px;
+  }
+  .card .legend-row span.sw{
+    display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px;
+  }
+  .card .source{
+    text-align:right;
+    font-size:10.5px;
+    font-style:italic;
+    color:#9AA5B3;
+    margin-top:8px;
+  }
+
+  /* big-number donuts */
+  .donut-card{align-items:center;}
+  .donut-figure{position:relative;width:100%;display:flex;align-items:center;justify-content:center;}
+  .donut-figure .center-label{
+    position:absolute;
+    text-align:center;
+    pointer-events:none;
+  }
+  .donut-figure .center-label .pct{
+    font-size:24px;font-weight:800;color:var(--ink);display:block;
+  }
+  .donut-figure .center-label .yr{
+    font-size:10px;color:var(--muted);
+  }
+  .target-line{
+    display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:10px;
+    border-top:1px dashed var(--line);padding-top:8px;
+  }
+  .target-line b{color:var(--ink);font-weight:700;}
+
+  /* milestone stepper */
+  .stepper{display:flex;align-items:flex-start;justify-content:space-between;margin-top:18px;}
+  .step{flex:1;text-align:center;position:relative;}
+  .step .node{
+    width:16px;height:16px;border-radius:50%;background:var(--base);
+    margin:0 auto 8px;border:3px solid #fff;box-shadow:0 0 0 2px var(--base);
+  }
+  .step.done .node{background:var(--tab-color);box-shadow:0 0 0 2px var(--tab-color);}
+  .step.current .node{background:#fff;box-shadow:0 0 0 3px var(--tab-color);}
+  .step:not(:last-child)::after{
+    content:'';position:absolute;top:7px;left:58%;right:-42%;height:2px;background:var(--base);z-index:0;
+  }
+  .step.done:not(:last-child)::after{background:var(--tab-color);}
+  .step p{font-size:10.5px;color:var(--muted);margin:0;line-height:1.35;padding:0 4px;}
+  .step p.now{color:var(--ink);font-weight:700;}
+
+  /* pending card */
+  .pending-card{
+    border:1.5px dashed var(--line);
+    background:repeating-linear-gradient(135deg, #fff 0 12px, #FAFBFC 12px 24px);
+    align-items:center;justify-content:center;text-align:center;
+  }
+  .pending-card .badge{
+    font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--tab-color);background:var(--tab-soft);padding:3px 10px;border-radius:20px;margin-bottom:10px;
+  }
+  .pending-card p{font-size:12.5px;color:var(--muted);margin:4px 0;max-width:230px;}
+
+  footer{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--muted);
+    padding:18px 20px 30px;
+  }
+
+  @media (max-width:560px){
+    header.top{flex-direction:column;align-items:flex-start;}
+    header.top .meta{text-align:left;}
+    .grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Results Framework · Monitoring Dashboard</div>
+    <h1>National Youth Strategy 2023–2027</h1>
+  </div>
+  <div class="meta">
+    Republic of North Macedonia<br>
+    <strong>Agency for Youth and Sport (AYS)</strong> · Baseline – Interim Targets – Final Targets
+  </div>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<main id="panels"></main>
+
+<footer>
+  Indicator baselines and targets sourced from the National Youth Strategy 2023–2027 Results Framework · State Statistical Office, Eurostat, AYS Youth Trends Survey 2022, PISA/OECD, UNICEF and related sources as cited per card.
+</footer>
+
+<script>
+/* =========================================================
+   DATA
+   ========================================================= */
+const categories = [
+  {
+    id:'participation', label:'Participation & Governance',
+    color:'var(--c-part)', cssColor:'#00B4B0', soft:'var(--c-part-soft)',
+    blurb:'Youth voice in local councils, elections, public services and decision-making.'
+  },
+  {
+    id:'infra', label:'Infrastructure & Information',
+    color:'var(--c-infra)', cssColor:'#8E2DE2', soft:'var(--c-infra-soft)',
+    blurb:'Digital skills, youth centres, information platforms and trained youth workers.'
+  },
+  {
+    id:'education', label:'Education',
+    color:'var(--c-edu)', cssColor:'#1565F2', soft:'var(--c-edu-soft)',
+    blurb:'NEET rates, learning outcomes (PISA) and internationalisation of higher education.'
+  },
+  {
+    id:'employment', label:'Employment',
+    color:'var(--c-emp)', cssColor:'#FF7A00', soft:'var(--c-emp-soft)',
+    blurb:'Labour market outcomes for young people aged 15–29.'
+  },
+  {
+    id:'culture', label:'Culture & Wellbeing',
+    color:'var(--c-cult)', cssColor:'#E8136B', soft:'var(--c-cult-soft)',
+    blurb:'Cultural participation, access to content, and risk behaviours among youth.'
+  },
+  {
+    id:'safety', label:'Safety & Digital Curricula',
+    color:'var(--c-safe)', cssColor:'#D62828', soft:'var(--c-safe-soft)',
+    blurb:'School safety systems and cybersecurity education currently being rolled out.'
+  },
+];
+
+/* indicator chart "kind": bar3 | donut | grouped | stepper | pending */
+const indicators = {
+  participation:[
+    { kind:'bar3', title:'Functional Local Youth Councils',
+      sub:'Number of municipalities with a Local Youth Council established under the Law on Youth Participation and Youth Policies.',
+      labels:['2022 Baseline','2025 Interim Target','2027 Target'], values:[15,35,60], unit:'',
+      source:'AYS' },
+
+    { kind:'grouped', title:'Youth Candidates in Elections',
+      sub:'% of candidates aged 18–29 among all candidates, by election type.',
+      groups:['Parliamentary (MPs)','Local — Mayor','Local — Councillor'],
+      baseline:[19.17,3,26.4], mid:[22,6,26.4], final:[25,10,26.4],
+      midNote:'Local mayor/councillor mid & final = maintain baseline level',
+      unit:'%', source:'Youth Political Absence (2020) / Delayed Youth Participation (2021)' },
+
+    { kind:'donut', title:'Youth E-Engagement with Authorities',
+      sub:'% of young people (16–29) who use the internet to communicate with public authorities.',
+      year:'2021', value:37.5, mid:42, final:47.5, unit:'%', color:'cssColor',
+      source:'Eurostat' },
+
+    { kind:'donut', title:'Youth Voice in Decision-Making',
+      sub:'% of young people (15–29) who feel youth are adequately involved in decision-making.',
+      year:'2022', value:22.5, mid:27, final:32, unit:'%',
+      source:'Youth Trends Survey 2022, AYS' },
+  ],
+
+  infra:[
+    { kind:'donut', title:'Digital Skills Among Youth',
+      sub:'% of young people (16–29) with basic or above-basic digital skills.',
+      year:'2021', value:58.2, mid:63, final:68, unit:'%',
+      source:'Eurostat' },
+
+    { kind:'bar3', title:'Youth Information Platform Visits',
+      sub:'Annual visits to the national youth information platform (does not yet exist at baseline).',
+      labels:['Baseline','2025 Interim Target','2027 Target'], values:[0,20000,60000], unit:'',
+      note:'Baseline: platform does not currently exist',
+      source:'Platform visitation statistics' },
+
+    { kind:'bar3', title:'Quality of Youth Media Content',
+      sub:'Average rating (1–5 scale) given by young people (15–29) for the quality of youth-targeted media information.',
+      labels:['2022 Baseline','2025 Interim Target','2027 Target'], values:[2.6,2.9,3.3], unit:'/5', max:5,
+      source:'Youth Trends Survey 2022, AYS' },
+
+    { kind:'bar3', title:'Youth Centres Established',
+      sub:'Number of youth centres established under the Law on Youth Participation and Youth Policies.',
+      labels:['2022 Baseline','2025 Interim Target','2027 Target'], values:[6,22,42], unit:'',
+      source:'Calculated for the strategy' },
+
+    { kind:'bar3', title:'Trained Youth Workers',
+      sub:'Youth workers who acquired or had recognised competencies via education, study or validation.',
+      labels:['Baseline','2025 Interim Target','2027 Target'], values:[24,85,170], unit:'',
+      source:'Calculated for the strategy' },
+  ],
+
+  education:[
+    { kind:'donut', title:'Youth NEET Rate', invert:true,
+      sub:'% of young people (15–29) Not in Education, Employment or Training.',
+      year:'2021', value:24.3, mid:22, final:20, unit:'%',
+      source:'State Statistical Office' },
+
+    { kind:'grouped', title:'PISA: Basic Competency Levels',
+      sub:'% of young people with minimum competency in secondary education.',
+      groups:['Mathematics','Reading','Science'],
+      baseline:[39,45,50], mid:[49,55,60], final:[49,55,60],
+      midNote:'2025 PISA cycle is the only re-test within the strategy period',
+      unit:'%', source:'PISA Study, OECD' },
+
+    { kind:'bar3', title:'International Students in Higher Ed',
+      sub:'% of international students enrolled in higher education in North Macedonia.',
+      labels:['2020 Baseline','2025 Interim Target','2027 Target'], values:[0.2,1.5,3], unit:'%',
+      source:'Eurostat' },
+  ],
+
+  employment:[
+    { kind:'bar3', title:'Youth Employment Rate',
+      sub:'Employment rate, % of persons aged 15–29.',
+      labels:['2021 Baseline','2025 Interim Target','2027 Target'], values:[33.4,35,37], unit:'%',
+      source:'State Statistical Office' },
+
+    { kind:'bar3', title:'Youth Unemployment Rate', invert:true,
+      sub:'Unemployment rate, % of the population aged 15–29.',
+      labels:['2021 Baseline','2025 Interim Target','2027 Target'], values:[27.6,26,24], unit:'%',
+      source:'State Statistical Office' },
+
+    { kind:'bar3', title:'Long-term Unemployment (Youth)', invert:true,
+      sub:'Unemployed 12 months or more, % of the population aged 15–29.',
+      labels:['2022 Baseline','2025 Interim Target','2027 Target'], values:[21.1,18,16.5], unit:'%',
+      source:'Eurostat' },
+
+    { kind:'bar3', title:'Youth Self-Employment Rate',
+      sub:'Self-employment rate, % of persons aged 15–29.',
+      labels:['2020 Baseline','2025 Interim Target','2027 Target'], values:[6.8,10,14], unit:'%',
+      source:'Eurostat' },
+  ],
+
+  culture:[
+    { kind:'donut', title:'Cultural & Artistic Participation',
+      sub:'% of young people (15–29) participating in cultural/artistic activities, as organisers or participants.',
+      year:'2022', value:33.7, mid:38, final:43, unit:'%',
+      source:'Youth Trends Survey 2022, AYS' },
+
+    { kind:'donut', title:'Access to Local Cultural Content',
+      sub:'% of young people (15–29) with access to cultural content at the local level.',
+      year:'2022', value:15.3, mid:20, final:25, unit:'%',
+      source:'Youth Trends Survey 2022, AYS' },
+
+    { kind:'grouped', title:'Substance Use Among Youth', invert:true,
+      sub:'% of young people (15–29) who are users of cigarettes, alcohol or drugs.',
+      groups:['Cigarettes','Alcohol','Drugs'],
+      baseline:[20.4,58.2,10.4], mid:[17,55,7.5], final:[15,53,5],
+      unit:'%', source:'Youth Trends Survey 2022, AYS' },
+  ],
+
+  safety:[
+    { kind:'stepper', title:'Cybersecurity in ICT Curricula',
+      sub:'Integration of a cybersecurity curriculum into ICT classes in secondary schools.',
+      steps:['Does not exist in the curriculum','Draft curriculum prepared','Adopted & in teaching use'],
+      current:0, source:'AYS / Ministry of Education' },
+
+    { kind:'stepper', title:'Peer Violence Recording System',
+      sub:'A national system for recording peer-violence incidents in schools.',
+      steps:['No such system exists','System in piloting phase','Functional & operational'],
+      current:0, source:'AYS / Ministry of Education' },
+
+    { kind:'pending', title:'Students Feeling Safe at School',
+      sub:'% of secondary school students who feel safe at school.',
+      note:'Baseline survey scheduled for 2023 — interim targets 2025 and final targets 2027 will be defined once the baseline is established.',
+      source:'AYS school safety survey' },
+  ],
+};
+
+/* =========================================================
+   RENDER: shell (tabs + panels)
+   ========================================================= */
+const tabsEl = document.getElementById('tabs');
+const panelsEl = document.getElementById('panels');
+const renderedPanels = new Set();
+
+categories.forEach((cat,i)=>{
+  const btn = document.createElement('button');
+  btn.textContent = cat.label;
+  btn.style.setProperty('--tab-color', cat.cssColor);
+  if(i===0) btn.classList.add('active');
+  btn.addEventListener('click',()=>activate(cat.id));
+  tabsEl.appendChild(btn);
+
+  const panel = document.createElement('section');
+  panel.className = 'panel'+(i===0?' active':'');
+  panel.id = 'panel-'+cat.id;
+  panel.innerHTML = `
+    <div class="panel-intro">
+      <span class="dot" style="background:${cat.cssColor}"></span>
+      <h2>${cat.label}</h2>
+      <p>— ${cat.blurb}</p>
+    </div>
+    <div class="grid" id="grid-${cat.id}"></div>
+  `;
+  panelsEl.appendChild(panel);
+});
+
+function activate(id){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const idx = categories.findIndex(c=>c.id===id);
+  document.querySelectorAll('nav.tabs button')[idx].classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  if(!renderedPanels.has(id)){
+    renderPanel(id);
+    renderedPanels.add(id);
+  }
+}
+
+/* =========================================================
+   RENDER: cards per panel
+   ========================================================= */
+function renderPanel(catId){
+  const cat = categories.find(c=>c.id===catId);
+  const grid = document.getElementById('grid-'+catId);
+  const list = indicators[catId];
+
+  list.forEach((ind,idx)=>{
+    const cardId = catId+'-'+idx;
+    const card = document.createElement('div');
+    card.className = 'card' + (ind.kind==='donut' ? ' donut-card' : '') + (ind.kind==='pending' ? ' pending-card' : '');
+    card.style.setProperty('--tab-color', cat.cssColor);
+    card.style.setProperty('--tab-soft', cat.soft);
+
+    if(ind.kind==='pending'){
+      card.innerHTML = `
+        <div class="badge">Baseline pending</div>
+        <p class="ctitle" style="margin-top:4px">${ind.title}</p>
+        <p>${ind.note}</p>
+        <div class="source">Source: ${ind.source}</div>
+      `;
+      grid.appendChild(card);
+      return;
+    }
+
+    if(ind.kind==='stepper'){
+      card.innerHTML = `
+        <p class="ctitle">${ind.title}</p>
+        <p class="csub">${ind.sub}</p>
+        <div class="stepper">
+          ${ind.steps.map((s,i)=>`
+            <div class="step ${i<ind.current?'done':''} ${i===ind.current?'current':''}">
+              <div class="node"></div>
+              <p class="${i===ind.current?'now':''}">${s}</p>
+            </div>`).join('')}
+        </div>
+        <div class="source">Source: ${ind.source}</div>
+      `;
+      grid.appendChild(card);
+      return;
+    }
+
+    if(ind.kind==='donut'){
+      card.innerHTML = `
+        <p class="ctitle">${ind.title}</p>
+        <p class="csub">${ind.sub}</p>
+        <div class="chart-wrap donut-figure">
+          <canvas id="${cardId}"></canvas>
+          <div class="center-label">
+            <span class="pct">${ind.value}${ind.unit}</span>
+            <span class="yr">${ind.year}</span>
+          </div>
+        </div>
+        <div class="target-line">
+          <span>Interim Target 2025: <b>${ind.mid}${ind.unit}</b></span>
+          <span>Final Target 2027: <b>${ind.final}${ind.unit}</b></span>
+        </div>
+        <div class="source">Source: ${ind.source}</div>
+      `;
+      grid.appendChild(card);
+      const remainder = Math.max(0, 100-ind.value*(ind.unit==='%'?1:1));
+      new Chart(document.getElementById(cardId), {
+        type:'doughnut',
+        data:{
+          labels:['Current','Remaining'],
+          datasets:[{
+            data: ind.unit==='%' ? [ind.value, Math.max(0,100-ind.value)] : [ind.value, 0],
+            backgroundColor:[cat.cssColor, '#EDEFF3'],
+            borderWidth:0,
+          }]
+        },
+        options:{
+          cutout:'72%',
+          plugins:{ legend:{display:false}, tooltip:{enabled:false} },
+          animation:{ duration:600 },
+        }
+      });
+      return;
+    }
+
+    if(ind.kind==='bar3'){
+      card.innerHTML = `
+        <p class="ctitle">${ind.title}</p>
+        <p class="csub">${ind.sub}${ind.note? ' <em>('+ind.note+')</em>':''}</p>
+        <div class="chart-wrap"><canvas id="${cardId}"></canvas></div>
+        <div class="source">Source: ${ind.source}</div>
+      `;
+      grid.appendChild(card);
+      const palette = [ '#C9CFD9', shade(cat.cssColor,0.55), cat.cssColor ];
+      new Chart(document.getElementById(cardId), {
+        type:'bar',
+        data:{
+          labels: ind.labels,
+          datasets:[{
+            data: ind.values,
+            backgroundColor: palette,
+            borderRadius:6,
+            maxBarThickness:54,
+          }]
+        },
+        options:{
+          plugins:{ legend:{display:false},
+            tooltip:{ callbacks:{ label:(c)=> c.parsed.y.toLocaleString()+ (ind.unit||'') } } },
+          scales:{
+            y:{ beginAtZero:true, max: ind.max||undefined, grid:{color:'#EEF1F5'}, ticks:{ font:{size:10}, callback:(v)=>v.toLocaleString() } },
+            x:{ grid:{display:false}, ticks:{ font:{size:10.5} } }
+          },
+          animation:{ duration:600 }
+        }
+      });
+      return;
+    }
+
+    if(ind.kind==='grouped'){
+      card.innerHTML = `
+        <p class="ctitle">${ind.title}</p>
+        <p class="csub">${ind.sub}${ind.midNote? ' <em>('+ind.midNote+')</em>':''}</p>
+        <div class="chart-wrap"><canvas id="${cardId}"></canvas></div>
+        <div class="legend-row">
+          <span><span class="sw" style="background:#C9CFD9"></span>Baseline</span>
+          <span><span class="sw" style="background:${shade(cat.cssColor,0.55)}"></span>2025 Interim Target</span>
+          <span><span class="sw" style="background:${cat.cssColor}"></span>2027 Target</span>
+        </div>
+        <div class="source">Source: ${ind.source}</div>
+      `;
+      grid.appendChild(card);
+      new Chart(document.getElementById(cardId), {
+        type:'bar',
+        data:{
+          labels: ind.groups,
+          datasets:[
+            { label:'Baseline', data: ind.baseline, backgroundColor:'#C9CFD9', borderRadius:5, maxBarThickness:26 },
+            { label:'2025 Interim Target', data: ind.mid, backgroundColor:shade(cat.cssColor,0.55), borderRadius:5, maxBarThickness:26 },
+            { label:'2027 Target', data: ind.final, backgroundColor:cat.cssColor, borderRadius:5, maxBarThickness:26 },
+          ]
+        },
+        options:{
+          plugins:{ legend:{display:false},
+            tooltip:{ callbacks:{ label:(c)=> c.dataset.label+': '+c.parsed.y+(ind.unit||'') } } },
+          scales:{
+            y:{ beginAtZero:true, grid:{color:'#EEF1F5'}, ticks:{ font:{size:10} } },
+            x:{ grid:{display:false}, ticks:{ font:{size:10} } }
+          },
+          animation:{ duration:600 }
+        }
+      });
+      return;
+    }
+  });
+}
+
+function shade(hex, amt){
+  // lighten a hex color toward white by amt (0-1)
+  const c = hex.replace('#','');
+  const r = parseInt(c.substring(0,2),16), g = parseInt(c.substring(2,4),16), b = parseInt(c.substring(4,6),16);
+  const nr = Math.round(r + (255-r)*amt);
+  const ng = Math.round(g + (255-g)*amt);
+  const nb = Math.round(b + (255-b)*amt);
+  return `rgb(${nr},${ng},${nb})`;
+}
+
+/* initial render */
+renderPanel(categories[0].id);
+renderedPanels.add(categories[0].id);
+</script>
+</body>
+</html>
